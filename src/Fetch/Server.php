@@ -322,9 +322,40 @@ class Server
      */
     public function search($criteria = 'ALL', $limit = null)
     {
+        $uidSearch = false;
+        if(preg_match('/^UID\s+[<>=]\s+\d+$/i', trim($criteria))) {
+            $criteria = explode(' ', $criteria);
+            $operator = $criteria[1];
+            $uid = $criteria[2];
+            $criteria = 'ALL';
+            $uidSearch = true;
+        }
+
+        $filter = function ($el) use ($uid, $operator) {
+            $result = false;
+            switch ($operator) {
+                case '>':
+                    $result = $el > $uid;
+                    break;
+                case '<':
+                    $result = $el < $uid;
+                    break;
+                case '=':
+                default:
+                    $result = (int) $el == (int) $uid;
+                    break;
+            }
+
+            return $result;
+        };
+
         if ($results = imap_search($this->getImapStream(), $criteria, SE_UID)) {
             if (isset($limit) && count($results) > $limit)
                 $results = array_slice($results, 0, $limit);
+
+            if ($uidSearch) {
+                $results = array_filter($results, $filter);
+            }
 
             $messages = array();
 
