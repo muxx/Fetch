@@ -445,7 +445,7 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
 
-        if (isset($parameters['name']) || isset($parameters['filename'])) {
+        if (isset($parameters['name']) || isset($parameters['filename']) && $parameters['filename']) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
         } elseif ($structure->type == 0 || $structure->type == 1) {
