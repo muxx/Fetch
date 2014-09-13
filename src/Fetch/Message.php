@@ -445,6 +445,19 @@ class Message
     {
         $parameters = self::getParametersFromStructure($structure);
 
+        if (isset($structure->parts)) { // multipart: iterate through each part
+            foreach ($structure->parts as $partIndex => $part) {
+                $partId = $partIndex + 1;
+
+                if (isset($partIdentifier))
+                    $partId = $partIdentifier . '.' . $partId;
+
+                $this->processStructure($part, $partId);
+            }
+
+            return;
+        }
+
         if (isset($parameters['name']) || isset($parameters['filename']) && $parameters['filename']) {
             $attachment          = new Attachment($this, $structure, $partIdentifier);
             $this->attachments[] = $attachment;
@@ -479,18 +492,6 @@ class Message
                 }
 
                 $this->htmlMessage .= $messageBody;
-            }
-        }
-
-        if (isset($structure->parts)) { // multipart: iterate through each part
-
-            foreach ($structure->parts as $partIndex => $part) {
-                $partId = $partIndex + 1;
-
-                if (isset($partIdentifier))
-                    $partId = $partIdentifier . '.' . $partId;
-
-                $this->processStructure($part, $partId);
             }
         }
     }
