@@ -615,6 +615,9 @@ class Message
         $outputAddresses = array();
         if (is_array($addresses))
             foreach ($addresses as $address) {
+                if (!isset($address->mailbox) || !isset($address->host)) {
+                    continue;
+                }
                 $currentAddress            = array();
                 $currentAddress['address'] = $address->mailbox . '@' . $address->host;
                 if (isset($address->personal))
