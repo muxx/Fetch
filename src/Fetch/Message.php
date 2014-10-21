@@ -469,10 +469,21 @@ class Message
             $messageBody = self::decode($messageBody, $structure->encoding);
 
             if (!empty($parameters['charset']) && $parameters['charset'] !== self::$charset) {
-                if (function_exists('mb_convert_encoding')) {
-                    $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
-                } else {
-                    $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
+                $mb_converted = false;
+                //if (function_exists('mb_convert_encoding')) {
+                //    try {
+                //        $messageBody = mb_convert_encoding($messageBody, self::$charset, $parameters['charset']);
+                //        $mb_converted = true;
+                //    } catch (Exception $e) {
+                //        // @TODO Handle exception
+                //    }
+                //}
+                if ( ! $mb_converted) {
+                    try {
+                        $messageBody = iconv($parameters['charset'], self::$charset . self::$charsetFlag, $messageBody);
+                    } catch (Exception $e) {
+                        // @TODO Handle exception
+                    }
                 }
             }
 
