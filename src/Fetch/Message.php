@@ -538,7 +538,7 @@ class Message
         $decoded = '';
         for ($i = 0; $i < count($header); $i++) {
             if ($header[$i]->charset != 'default') {
-                $decoded .= iconv($header[$i]->charset, $outEncoding, $header[$i]->text);
+                $decoded .= iconv($header[$i]->charset, $outEncoding . self::$charsetFlag, $header[$i]->text);
             } else {
                 $decoded .= $header[$i]->text;
             }
