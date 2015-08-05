@@ -93,9 +93,9 @@ class Attachment
         $parameters = Message::getParametersFromStructure($structure);
 
         if (isset($parameters['filename'])) {
-            $this->filename = $parameters['filename'];
+            $this->setFileName($parameters['filename']);
         } elseif (isset($parameters['name'])) {
-            $this->filename = $parameters['name'];
+            $this->setFileName($parameters['name']);
         }
 
         $this->size = $structure->bytes;
@@ -227,5 +227,10 @@ class Attachment
         fclose($filePointer);
 
         return $result;
+    }
+    
+    protected function setFileName($text)
+    {
+        $this->filename = MIME::decode($text, Message::$charset);
     }
 }
